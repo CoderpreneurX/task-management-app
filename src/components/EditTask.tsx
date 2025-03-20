@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "./ui/Button";
 import {
   DialogContent,
@@ -18,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/Select";
-import { useStore } from "@/stores/StoreProvider";
+import { editTask } from "@/utils/taskApi"; // Import API function
 
 interface EditTaskProps {
   id: string;
@@ -37,93 +38,71 @@ const EditTask = ({
   open,
   setOpen,
 }: EditTaskProps) => {
-  const { taskStore } = useStore();
   const router = useRouter();
+  const queryClient = useQueryClient();
+
   const [newTitle, setNewTitle] = useState<string>(title);
   const [newDescription, setNewDescription] = useState<string>(description);
   const [newStatus, setNewStatus] = useState<string>(status);
   const [error, setError] = useState<string>();
 
-  const handleEditedTask = (e: any) => {
+  const mutation = useMutation({
+    mutationFn: (updatedTask: { id: string; title: string; description: string; status: string }) => editTask(updatedTask),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tasks"] }); // Refetch task list
+      setOpen(false); // Close the dialog
+      router.refresh(); // Refresh the page if necessary
+    },
+    onError: (err: any) => {
+      setError(err.message || "Failed to edit task. Please try again.");
+    },
+  });
+
+  const handleEditedTask = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError("");
 
     if (newTitle.length < 3) {
       setError("Please enter a title with at least 3 characters");
-    } else if (newDescription.length < 3) {
-      setError("Please enter a description with at least 3 characters");
-    } else if (!newStatus) {
-      setError("Please select a status for the task");
-    } else {
-      const editedTask = {
-        title: newTitle,
-        description: newDescription,
-        status: newStatus,
-      };
-
-      taskStore.editTask(id, editedTask);
-
-      // Reset the input values
-      setNewTitle("");
-      setNewDescription("");
-      setNewStatus("");
-      setError("");
-      setOpen(!open);
-      router.refresh();
+      return;
     }
+    if (newDescription.length < 3) {
+      setError("Please enter a description with at least 3 characters");
+      return;
+    }
+    if (!newStatus) {
+      setError("Please select a status for the task");
+      return;
+    }
+
+    mutation.mutate({ id: id, title: newTitle, description: newDescription, status: newStatus });
   };
 
   return (
     <DialogContent className="sm:max-w-2xl">
       <DialogHeader>
         <DialogTitle className="text-xl">Edit Task</DialogTitle>
-        <DialogDescription>
-          Edit or Update Your Task here. Click save when you are done.
-        </DialogDescription>
+        <DialogDescription>Edit or update your task here. Click save when done.</DialogDescription>
       </DialogHeader>
       <form onSubmit={handleEditedTask}>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-2">
-            <Label
-              htmlFor="name"
-              className="text-left"
-            >
+            <Label htmlFor="name" className="text-left">
               Title
             </Label>
-            <Input
-              id="name"
-              value={newTitle}
-              onChange={(e) => setNewTitle(e.target.value)}
-              placeholder="Title"
-              className="col-span-3"
-            />
+            <Input id="name" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} placeholder="Title" className="col-span-3" />
           </div>
           <div className="grid grid-cols-4 items-center gap-2">
-            <Label
-              htmlFor="description"
-              className="text-left"
-            >
+            <Label htmlFor="description" className="text-left">
               Description
             </Label>
-            <Textarea
-              id="description"
-              rows={5}
-              value={newDescription}
-              onChange={(e) => setNewDescription(e.target.value)}
-              placeholder="Description"
-              className="col-span-3"
-            />
+            <Textarea id="description" rows={5} value={newDescription} onChange={(e) => setNewDescription(e.target.value)} placeholder="Description" className="col-span-3" />
           </div>
           <div className="grid grid-cols-4 items-center gap-2">
-            <Label
-              htmlFor="status"
-              className="text-left"
-            >
+            <Label htmlFor="status" className="text-left">
               Status
             </Label>
-            <Select
-              value={newStatus}
-              onValueChange={setNewStatus}
-            >
+            <Select value={newStatus} onValueChange={setNewStatus}>
               <SelectTrigger className="col-span-3">
                 <SelectValue placeholder="Task Status" />
               </SelectTrigger>
@@ -134,15 +113,13 @@ const EditTask = ({
               </SelectContent>
             </Select>
           </div>
-          {error && (
-            <p className="text-center py-1 rounded bg-error-background text-error-foreground">
-              {error}
-            </p>
-          )}
+          {error && <p className="text-center py-1 rounded bg-error-background text-error-foreground">{error}</p>}
         </div>
 
         <DialogFooter>
-          <Button type="submit">Save Changes</Button>
+          <Button type="submit" disabled={mutation.isPending}>
+            {mutation.isPending ? "Saving..." : "Save Changes"}
+          </Button>
         </DialogFooter>
       </form>
     </DialogContent>

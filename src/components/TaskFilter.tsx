@@ -1,9 +1,12 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
-interface TaskFilterProps {}
+interface TaskFilterProps {
+  allCount: number,
+  completedCount: number
+}
 
-const TaskFilter = ({}: TaskFilterProps) => {
+const TaskFilter = ({allCount, completedCount}: TaskFilterProps) => {
   const searchParams = useSearchParams();
   const tasksFilter = searchParams.get("tasks");
 
@@ -16,7 +19,7 @@ const TaskFilter = ({}: TaskFilterProps) => {
             tasksFilter === null && "bg-emerald-200 text-slate-900 "
           } inline-block px-4 sm:px-14 py-2 rounded focus:outline-none`}
         >
-          All
+          All {`(${allCount})`}
         </Link>
 
         <Link
@@ -29,21 +32,12 @@ const TaskFilter = ({}: TaskFilterProps) => {
         </Link>
 
         <Link
-          href="/?tasks=in_progress"
-          className={`${
-            tasksFilter === "in_progress" && "bg-emerald-200 text-slate-900 "
-          } inline-block px-4 sm:px-14 py-2 rounded focus:outline-none`}
-        >
-          In Progress
-        </Link>
-
-        <Link
           href="/?tasks=completed"
           className={`${
             tasksFilter === "completed" && "bg-emerald-200 text-slate-900 "
           } inline-block px-4 sm:px-14 py-2 rounded focus:outline-none`}
         >
-          Completed
+          Completed {`(${completedCount})`}
         </Link>
       </ul>
     </div>
