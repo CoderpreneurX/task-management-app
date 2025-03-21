@@ -1,7 +1,7 @@
 import api from "./axiosInstance";
 
 export const listTasks = async (
-  status: string = "pending",
+  status: string | null,
   page: string | number = 1
 ) => {
   try {
