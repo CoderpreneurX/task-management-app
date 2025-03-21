@@ -38,12 +38,8 @@ const AddTask = observer(() => {
       setError("Please enter a title with at least 3 characters");
       return;
     }
-    if (description.length < 3) {
-      setError("Please enter a description with at least 3 characters");
-      return;
-    }
-    if (!status) {
-      setError("Please select a status for the task");
+    if (description.length < 10) {
+      setError("Please enter a description with at least 10 characters");
       return;
     }
 
@@ -85,15 +81,6 @@ const AddTask = observer(() => {
               <Label htmlFor="status" className="text-left">
                 Status
               </Label>
-              <Select value={status} onValueChange={setStatus}>
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Task Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
             {error && <p className="text-center py-1 rounded bg-error-background text-error-foreground">{error}</p>}
           </div>

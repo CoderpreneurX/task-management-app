@@ -66,12 +66,8 @@ const EditTask = ({
       setError("Please enter a title with at least 3 characters");
       return;
     }
-    if (newDescription.length < 3) {
+    if (newDescription.length < 10) {
       setError("Please enter a description with at least 3 characters");
-      return;
-    }
-    if (!newStatus) {
-      setError("Please select a status for the task");
       return;
     }
 
@@ -102,16 +98,6 @@ const EditTask = ({
             <Label htmlFor="status" className="text-left">
               Status
             </Label>
-            <Select value={newStatus} onValueChange={setNewStatus}>
-              <SelectTrigger className="col-span-3">
-                <SelectValue placeholder="Task Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="in_progress">In Progress</SelectItem>
-                <SelectItem value="completed">Completed</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
           {error && <p className="text-center py-1 rounded bg-error-background text-error-foreground">{error}</p>}
         </div>
