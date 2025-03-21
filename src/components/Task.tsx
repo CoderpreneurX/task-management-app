@@ -21,9 +21,15 @@ interface TaskProps {
   title: string;
   description: string;
   status: string;
+  user: User | null;
 }
 
-const Task = observer(({ id, title, description, status }: TaskProps) => {
+interface User {
+  email: string,
+  fullName: string
+}
+
+const Task = observer(({ id, user, title, description, status }: TaskProps) => {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
   // const taskStatus = status === "pending" ? "completed" : "pending"
@@ -105,6 +111,8 @@ const Task = observer(({ id, title, description, status }: TaskProps) => {
           </Button>
         </div>
       </div>
+
+      <p className="mt-2 text-xs text-slate-600">{user === "you" ? "You": user?.email}</p>
 
       <Badge
         className="my-2"
