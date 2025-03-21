@@ -9,9 +9,10 @@ import { listTasks } from "@/utils/taskApi";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
-const TaskList = observer(() => {
+const TaskList = observer(({user}) => {
+  console.log("Viewing tasks for user:", user)
   const searchParams = useSearchParams();
-  const statusFilter = searchParams.get("tasks") || "pending"; // Get filter from URL
+  const statusFilter = searchParams.get("tasks") || null; // Get filter from URL
   const initalPage = Number(searchParams.get("page")) || 1;
   const router = useRouter();
 
@@ -61,11 +62,7 @@ const TaskList = observer(() => {
       <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between p-4 sticky top-0 z-10">
         <h2 className="sm:text-2xl text-lg font-semibold">
           All The{" "}
-          {statusFilter === "pending"
-            ? "Pending"
-            : statusFilter === "in_progress"
-            ? "In Progress"
-            : "Completed"}{" "}
+          {statusFilter === "pending" ? "Pending" : statusFilter === "Completed" ? "Completed" : ""}{" "}
           Tasks
         </h2>
         <AddTask />
@@ -91,6 +88,7 @@ const TaskList = observer(() => {
           <div className="flex flex-col gap-2">
             {tasks.tasks.map((task: any) => (
               <Task
+                user={task.User?.email === user.email ? "you" : task.User}
                 key={task.id}
                 id={task.id}
                 title={task.title}
