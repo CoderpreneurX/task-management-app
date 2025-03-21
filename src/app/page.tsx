@@ -8,7 +8,7 @@ const Home = async ({}) => {
       </h1>
 
       <div className="flex justify-center">
-        <TaskList />
+        {/* <TaskList /> */}
       </div>
     </div>
   );

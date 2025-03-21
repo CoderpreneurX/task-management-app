@@ -1,23 +1,21 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
-import { loginUser } from "@/utils/authApi";
+import { registerUser } from "@/utils/authApi";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { Label } from "./ui/Label";
 import { Input } from "./ui/Input";
 import { Button } from "./ui/Button";
 
-export default function LoginForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [formData, setFormData] = useState({ email: "", password: "" });
+export default function SignupForm() {
+  const [formData, setFormData] = useState({ email: "", password: "", fullName: "" });
   const { register, handleSubmit } = useForm();
   const [toast, setToast] = useState(false)
   const [toastMessage, setToastMessage] = useState("")
 
   const mutation = useMutation({
-    mutationFn: loginUser,
+    mutationFn: registerUser,
     onSuccess: (data: any) => {
       setToast(true)
       setToastMessage(data.message)
@@ -36,16 +34,29 @@ export default function LoginForm() {
   }
 
   return (
-    <div className="flex border bg-white rounded p-6 flex-col justify-center">
+    <div className="flex border bg-white rounded p-6 w-96 flex-col justify-center">
       {toast && <div className="p-4 bg-white rounded fixed top-4 right-4 border shadow">{toastMessage}</div>}
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <h2 className=" text-center text-2xl/9 font-bold tracking-tight text-gray-900">
-          Sign in to your account
+          Create your account
         </h2>
       </div>
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form className="space-y-6" onSubmit={onSubmit}>
+          <div>
+            <Label htmlFor="fullName">Full Name</Label>
+            <div className="mt-2">
+              <Input
+                type="text"
+                name="fullName"
+                id="fullName"
+                required
+                onChange={(e) => setFormData({...formData, fullName: e.target.value})}
+              />
+            </div>
+          </div>
+
           <div>
             <Label htmlFor="email">Email address</Label>
             <div className="mt-2">
