@@ -57,7 +57,7 @@ const TaskList = observer(({user}) => {
   const completedTasksCount = tasks.tasks.filter((task: any) => task.status === "completed").length;
 
   return (
-    <div className="flex flex-col fixed sm:top-20 px-2 max-w-full justify-center sm:px-8 top-12 h-[calc(100%-70px)] sm:h-[calc(100%-85px)]">
+    <div className="flex flex-col fixed px-2 max-w-full justify-center sm:px-8">
       {/* ✅ Sticky Header: Title & Add Task Button */}
       <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between p-4 sticky top-0 z-10">
         <h2 className="sm:text-2xl text-lg font-semibold">
