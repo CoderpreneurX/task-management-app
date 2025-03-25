@@ -6,7 +6,7 @@ interface TaskFilterProps {
   completedCount: number
 }
 
-const TaskFilter = ({allCount, completedCount}: TaskFilterProps) => {
+const TaskFilter = () => {
   const searchParams = useSearchParams();
   const tasksFilter = searchParams.get("tasks");
 
@@ -19,7 +19,7 @@ const TaskFilter = ({allCount, completedCount}: TaskFilterProps) => {
             tasksFilter === null && "bg-emerald-200 text-slate-900 "
           } inline-block px-4 sm:px-14 py-2 rounded focus:outline-none`}
         >
-          All {`(${allCount})`}
+          All
         </Link>
 
         <Link
@@ -37,7 +37,7 @@ const TaskFilter = ({allCount, completedCount}: TaskFilterProps) => {
             tasksFilter === "completed" && "bg-emerald-200 text-slate-900 "
           } inline-block px-4 sm:px-14 py-2 rounded focus:outline-none`}
         >
-          Completed {`(${completedCount})`}
+          Completed
         </Link>
       </ul>
     </div>
