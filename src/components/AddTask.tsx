@@ -77,11 +77,6 @@ const AddTask = observer(() => {
               </Label>
               <Textarea id="description" className="col-span-3" rows={5} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description" />
             </div>
-            <div className="grid grid-cols-4 items-center gap-2">
-              <Label htmlFor="status" className="text-left">
-                Status
-              </Label>
-            </div>
             {error && <p className="text-center py-1 rounded bg-error-background text-error-foreground">{error}</p>}
           </div>
 

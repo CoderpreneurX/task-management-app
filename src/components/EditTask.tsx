@@ -94,11 +94,6 @@ const EditTask = ({
             </Label>
             <Textarea id="description" rows={5} value={newDescription} onChange={(e) => setNewDescription(e.target.value)} placeholder="Description" className="col-span-3" />
           </div>
-          <div className="grid grid-cols-4 items-center gap-2">
-            <Label htmlFor="status" className="text-left">
-              Status
-            </Label>
-          </div>
           {error && <p className="text-center py-1 rounded bg-error-background text-error-foreground">{error}</p>}
         </div>
 
