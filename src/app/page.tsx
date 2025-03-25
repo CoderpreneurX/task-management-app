@@ -1,11 +1,14 @@
 "use client";
 
 import TaskList from "@/components/TaskList";
+import AvatarDropdown from "@/components/ui/AvatarDropdown";
 import Sidebar from "@/components/ui/Sidebar";
 import useAuth from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
 const Home = ({}) => {
   const { user, loading } = useAuth();
+  const router = useRouter();
 
   if (loading) {
     return (
@@ -14,7 +17,7 @@ const Home = ({}) => {
   }
 
   if (!user) {
-    return null;
+    router.push('/login');
   }
 
   return (
@@ -23,6 +26,9 @@ const Home = ({}) => {
 
       <div className="flex justify-center">
         <TaskList user={user} />
+      </div>
+      <div className="fixed bottom-6 left-6">
+        <AvatarDropdown user={user} />
       </div>
     </div>
   );
