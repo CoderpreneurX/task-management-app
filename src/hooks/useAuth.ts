@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import api from "@/utils/axiosInstance"; // Ensure this path matches your project structure
+import api from "@/utils/axiosInstance"; // Ensure this path is correct
 
 interface User {
   fullName: string;
@@ -16,18 +16,17 @@ const useAuth = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await api.get("/auth/me"); // Change this to your actual auth endpoint
+        const res = await api.get("/auth/me"); // Your auth endpoint
         setUser(res.data);
       } catch (error) {
         setUser(null);
-        router.push("/login");
       } finally {
-        setLoading(false);
+        setLoading(false); // Set loading false AFTER we know the result
       }
     };
 
     fetchUser();
-  }, [router]);
+  }, []);
 
   return { user, loading };
 };
