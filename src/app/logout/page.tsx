@@ -11,7 +11,7 @@ export default function LogoutPage() {
         async function logout() {
             try {
                 await api.post('/auth/logout')
-                router.push("/")
+                router.push("/login")
             } catch {
                 console.log("Error logging out...")
             }
