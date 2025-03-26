@@ -24,7 +24,7 @@ export default function SignupForm() {
       setToast(true)
       setToastMessage(data.message)
       setLoading(false)
-      router.push('/login')
+      router.push('/')
       console.log("Logging user", data)
     },
     onError: (error: any) => {
