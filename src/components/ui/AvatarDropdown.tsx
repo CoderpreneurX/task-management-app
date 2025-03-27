@@ -15,6 +15,7 @@ const AvatarDropdown = ({ user }: { user: User }) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [positionAbove, setPositionAbove] = useState(true);
+  const [loggingOut, setLoggingOut] = useState<boolean>(false)
   const router = useRouter();
 
   // Handle clicks outside to close the dropdown
@@ -52,6 +53,7 @@ const AvatarDropdown = ({ user }: { user: User }) => {
   }, [isOpen]);
 
   const handleLogout = () => {
+    setLoggingOut(true)
     router.push("/logout")
   };
 
@@ -80,9 +82,10 @@ const AvatarDropdown = ({ user }: { user: User }) => {
           </div>
           <button
             onClick={handleLogout}
+            disabled={loggingOut}
             className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100 transition"
           >
-            Logout
+            {loggingOut ? "Redirecting..." : "Logout"}
           </button>
         </div>
       )}
