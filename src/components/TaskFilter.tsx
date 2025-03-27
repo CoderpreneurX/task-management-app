@@ -3,10 +3,11 @@ import { useSearchParams } from "next/navigation";
 
 interface TaskFilterProps {
   allCount: number,
-  completedCount: number
+  completedCount: number,
+  pendingCount: number
 }
 
-const TaskFilter = () => {
+const TaskFilter = ({allCount, completedCount, pendingCount}: TaskFilterProps) => {
   const searchParams = useSearchParams();
   const tasksFilter = searchParams.get("tasks");
 
@@ -19,25 +20,25 @@ const TaskFilter = () => {
             tasksFilter === null && "bg-emerald-200 text-slate-900 "
           } inline-block px-4 sm:px-14 py-2 rounded focus:outline-none`}
         >
-          All
+          All {`(${allCount})`}
         </Link>
 
         <Link
-          href="/?tasks=pending"
+          href="/?tasks=pending&page=1"
           className={`${
             tasksFilter === "pending" && "bg-emerald-200 text-slate-900 "
           } inline-block px-4 sm:px-14 py-2 rounded focus:outline-none`}
         >
-          Pending
+          Pending {`(${pendingCount})`}
         </Link>
 
         <Link
-          href="/?tasks=completed"
+          href="/?tasks=completed&page=1"
           className={`${
             tasksFilter === "completed" && "bg-emerald-200 text-slate-900 "
           } inline-block px-4 sm:px-14 py-2 rounded focus:outline-none`}
         >
-          Completed
+          Completed {`(${completedCount})`}
         </Link>
       </ul>
     </div>
