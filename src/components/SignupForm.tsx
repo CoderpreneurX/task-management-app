@@ -104,7 +104,7 @@ export default function SignupForm() {
 
           <div>
             <Button ref={submitButton} type="submit" className="w-full">
-              {isLoading ? "Signing you up..." : "Sign in"}
+              {isLoading ? "Signing you up..." : "Sign up"}
             </Button>
           </div>
           <p className="text-center">Already have an account? <button onClick={switchToLogin} className="font-bold underline">Login</button></p>
