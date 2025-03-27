@@ -15,13 +15,9 @@ export default function SignupPage() {
     }
   }, [loading, user, router]);
 
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-
   return (
     <div className="h-screen grid place-content-center">
-      <SignupForm />
+     {loading ? <p>Loading...</p> : <SignupForm />}
     </div>
   );
 }
