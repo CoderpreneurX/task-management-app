@@ -45,7 +45,7 @@ const Task = observer(
       mutationFn: () => deleteTask({ id }),
       onSuccess: (message) => {
         setToast(true)
-        setToastMessage(message.toString())
+        setToastMessage(message.message)
         queryClient.invalidateQueries({ queryKey: ["tasks"] });
       },
       onError: (error) => {
@@ -62,7 +62,7 @@ const Task = observer(
       },
       onSuccess: (message) => {
         setToast(true)
-        setToastMessage(message)
+        setToastMessage(message.message)
         queryClient.invalidateQueries({ queryKey: ["tasks"] });
       },
       onError: (error) => {
