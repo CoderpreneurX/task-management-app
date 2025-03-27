@@ -72,7 +72,7 @@ const TaskList = observer(({ user }) => {
   console.log("The user viewing is:", user)
 
   return (
-    <div className="flex flex-col fixed px-2 max-w-full justify-center sm:px-8">
+    <div className="flex flex-col h-full fixed px-2 max-w-full justify-center sm:px-8">
       {/* ✅ Sticky Header: Title & Add Task Button */}
       <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between p-4 sticky top-0 z-10">
         <h2 className="sm:text-2xl text-lg font-semibold">
@@ -88,12 +88,12 @@ const TaskList = observer(({ user }) => {
 
       {/* ✅ Sticky Filter */}
       <div className="sticky top-[4rem] z-10 p-2">
-        <TaskFilter />
+        <TaskFilter allCount={tasks.totalTasks} pendingCount={tasks.pendingTasks.length} completedCount={tasks.completedTasks.length} />
       </div>
 
       {/* ✅ Scrollable Task List */}
       <div
-        className={`flex-1 overflow-y-scroll max-w-screen max-h-[calc(100vh-200px)] px-4 pt-2 pb-26 ${
+        className={`flex-1 overflow-y-auto max-w-screen max-h-[calc(100vh-200px)] px-4 pt-2 pb-26 ${
           page > 1 && "min-w-max"
         }`}
       >
@@ -116,13 +116,8 @@ const TaskList = observer(({ user }) => {
         )}
       </div>
 
-      <div className="flex justify-between items-center">
-        <p>Showing records: 
-          {
-            tasks.currentPage === 1 ? "First page"
-            : "Not the first page"
-          }
-        </p>
+      <div className="flex self-end justify-between items-center">
+        <div></div>
       {/* ✅ Page Navigation */}
       <div className="p-3 text-right font-bold">
         {tasks.currentPage !== 1 && (
@@ -133,7 +128,7 @@ const TaskList = observer(({ user }) => {
             {"<<"}
           </button>
         )}
-        Page {tasks.currentPage} / {tasks.totalPages}
+        Page {tasks.totalPages === 0 ? 0 : tasks.currentPage} / {tasks.totalPages}
         {tasks.currentPage < tasks.totalPages && (
           <button
           onClick={goToNextPage}
