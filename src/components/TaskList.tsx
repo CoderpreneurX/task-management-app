@@ -37,7 +37,7 @@ const TaskList = observer(({ user }) => {
   } = useQuery({
     queryKey: ["tasks", statusFilter, page], // ✅ Ensures fresh fetch on page change
     queryFn: () => listTasks(statusFilter, page),
-    staleTime: 0, // ✅ Forces fresh data every time
+    staleTime: Infinity, // ✅ Forces fresh data every time
   });
 
   // ✅ Pagination Functions (Updates page & triggers a refetch)
