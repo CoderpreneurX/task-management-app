@@ -49,7 +49,9 @@ export default function LoginForm() {
 
   return (
     <div className="flex border bg-white rounded p-6 flex-col justify-center">
-      {toast && <div className="p-4 bg-white rounded fixed top-4 right-4 border shadow">{toastMessage}</div>}
+      {toast && <div className="p-4 bg-white rounded fixed top-4 right-4 border shadow">
+        {toastMessage} <button onClick={() => {setToast(!toast)}}>x</button>
+      </div>}
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <h2 className=" text-center text-2xl/9 font-bold tracking-tight text-gray-900">
           Sign in to your account
@@ -75,14 +77,14 @@ export default function LoginForm() {
           <div>
             <div className="flex items-center justify-between">
               <Label htmlFor="password">Password</Label>
-              <div className="text-sm">
+              {/* <div className="text-sm">
                 <a
                   href="#"
                   className="font-semibold text-indigo-600 hover:text-indigo-500"
                 >
                   Forgot password?
                 </a>
-              </div>
+              </div> */}
             </div>
             <div className="mt-2">
               <Input

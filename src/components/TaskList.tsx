@@ -8,19 +8,32 @@ import TaskFilter from "./TaskFilter";
 import { listTasks } from "@/utils/taskApi";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
+import { io } from "socket.io-client";
+import { HiBell } from "react-icons/hi";
+import ThemeToggler from "./ui/ThemeToggler";
+import Notifications from "./Notifications";
 
-const TaskList = observer(({ user }) => {
+const TaskList = ({ user }: any) => {
   console.log("Viewing tasks for user:", user);
 
   const searchParams = useSearchParams();
   const rawStatusFilter = searchParams.get("tasks");
   const statusFilter = rawStatusFilter || "all"; // ✅ Default to "all" if null
 
+  const [toast, setToast] = useState<boolean>(false);
+  const [toastMessage, setToastMessage] = useState<string>("");
+  const [showNotifications, setShowNotifications] = useState<boolean>(false);
+
   const initialPage = Number(searchParams.get("page")) || 1;
   const [page, setPage] = useState(initialPage);
   const router = useRouter();
 
-  // ✅ Update URL when `page` or `statusFilter` changes
+  // ✅ Ensure `statusFilter` change resets `page` first
+  useEffect(() => {
+    setPage(1); // ✅ Reset page when statusFilter changes
+  }, [statusFilter]);
+
+  // ✅ Update URL only after `page` is properly set
   useEffect(() => {
     const queryParams = new URLSearchParams();
     if (statusFilter !== "all") queryParams.set("tasks", statusFilter);
@@ -42,13 +55,13 @@ const TaskList = observer(({ user }) => {
 
   // ✅ Pagination Functions (Updates page & triggers a refetch)
   const goToNextPage = () => {
-    if (tasks && tasks.currentPage < tasks.totalPages) {
+    if (tasks && tasks?.currentPage < tasks?.totalPages) {
       setPage((prev) => prev + 1);
     }
   };
 
   const goToPrevPage = () => {
-    if (tasks && tasks.currentPage > 1) {
+    if (tasks && tasks?.currentPage > 1) {
       setPage((prev) => prev - 1);
     }
   };
@@ -59,22 +72,55 @@ const TaskList = observer(({ user }) => {
     console.log("Tasks Data:", tasks);
   }, [tasks, page]);
 
-  if (isLoading)
-    return (
-      <p className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-        Loading tasks...
-      </p>
-    );
   if (error) return <p>Error: {error.message}</p>;
 
-  console.log("Is tasks.tasks an Array?", Array.isArray(tasks.tasks));
+  if (user?.role == "admin") {
+    const socket = io(`http://localhost:5000/?token=${user.token}`);
 
-  console.log("The user viewing is:", user)
+    socket.on("taskCreated", (data) => {
+      setToast(true);
+      setToastMessage(data.message);
+      console.log(data.message);
+    });
+
+    socket.on("taskUpdated", (data) => {
+      setToast(true);
+      setToastMessage(data.message);
+      console.log(data.message);
+    });
+
+    socket.on("taskStatusUpdated", (data) => {
+      setToast(true);
+      setToastMessage(data.message);
+      console.log(data.message);
+    });
+
+    socket.on("taskDeleted", (data) => {
+      setToast(true);
+      setToastMessage(data.message);
+      console.log(data.message);
+    });
+  }
 
   return (
-    <div className="flex flex-col h-full fixed px-2 max-w-full justify-center sm:px-8">
+    <div className="flex flex-col h-screen px-2 justify-center sm:px-8 bg-white dark:bg-gray-900 text-black dark:text-white">
+      {showNotifications && (
+        <Notifications onHide={() => setShowNotifications(false)} />
+      )}
+      {toast && (
+        <div className="p-4 z-50 bg-white rounded fixed top-4 right-4 border shadow">
+          {toastMessage}{" "}
+          <button
+            onClick={() => {
+              setToast(!toast);
+            }}
+          >
+            x
+          </button>
+        </div>
+      )}
       {/* ✅ Sticky Header: Title & Add Task Button */}
-      <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between p-4 sticky top-0 z-10">
+      <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between p-4 sticky top-0 z-10 bg-white dark:bg-gray-900">
         <h2 className="sm:text-2xl text-lg font-semibold">
           {statusFilter === "pending"
             ? "Pending"
@@ -83,25 +129,40 @@ const TaskList = observer(({ user }) => {
             : "All"}{" "}
           Tasks
         </h2>
-        <AddTask />
+        <div className="flex gap-4 items-center">
+          {user?.role === "admin" && (
+            <HiBell onClick={() => setShowNotifications(true)} size={22} />
+          )}
+          <AddTask />
+        </div>
       </div>
 
       {/* ✅ Sticky Filter */}
-      <div className="sticky top-[4rem] z-10 p-2">
-        <TaskFilter allCount={tasks.totalTasks} pendingCount={tasks.pendingTasks.length} completedCount={tasks.completedTasks.length} />
+      <div className="sticky top-[4rem] z-10 p-2 bg-white dark:bg-gray-900">
+        <TaskFilter
+          allCount={tasks?.totalTasks}
+          pendingCount={tasks?.pendingTasks}
+          completedCount={tasks?.completedTasks}
+        />
       </div>
 
       {/* ✅ Scrollable Task List */}
       <div
-        className={`flex-1 overflow-y-auto max-w-screen max-h-[calc(100vh-200px)] px-4 pt-2 pb-26 ${
+        className={`flex-1 overflow-y-auto max-w-[720px] w-full mx-auto max-h-[calc(100vh-200px)] px-4 pt-2 pb-26 ${
           page > 1 && "min-w-max"
         }`}
       >
-        {tasks.tasks.length === 0 ? (
-          <p className="text-center text-gray-500">No tasks found.</p>
+        {isLoading ? (
+          <div>
+            <div className="size-8 border-3 border-blue-600 dark:border-blue-400 border-r-slate-400 dark:border-r-gray-600 animate-spin"></div>
+          </div>
+        ) : tasks.tasks?.length === 0 ? (
+          <p className="text-center text-gray-500 dark:text-gray-400">
+            No tasks found.
+          </p>
         ) : (
           <div className="flex flex-col gap-2">
-            {tasks.tasks.map((task: any) => (
+            {tasks.tasks?.map((task: any) => (
               <Task
                 user={task.User ? task.User : user}
                 currentUser={user}
@@ -118,29 +179,33 @@ const TaskList = observer(({ user }) => {
 
       <div className="flex self-end justify-between items-center">
         <div></div>
-      {/* ✅ Page Navigation */}
-      <div className="p-3 text-right font-bold">
-        {tasks.currentPage !== 1 && (
-          <button
-          onClick={goToPrevPage}
-          className="mr-2 underline text-blue-500 hover:text-blue-700"
-          >
-            {"<<"}
-          </button>
-        )}
-        Page {tasks.totalPages === 0 ? 0 : tasks.currentPage} / {tasks.totalPages}
-        {tasks.currentPage < tasks.totalPages && (
-          <button
-          onClick={goToNextPage}
-          className="ml-2 underline text-blue-500 hover:text-blue-700"
-          >
-            {">>"}
-          </button>
-        )}
+        {/* ✅ Page Navigation */}
+        <div className="p-3 text-right font-bold">
+          {tasks?.currentPage !== 1 && (
+            <button
+              onClick={goToPrevPage}
+              className="mr-2 underline text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
+            >
+              {"<<"}
+            </button>
+          )}
+          Page {tasks?.totalPages === 0 ? 0 : tasks?.currentPage} /{" "}
+          {tasks?.totalPages}
+          {tasks?.currentPage < tasks?.totalPages && (
+            <button
+              onClick={goToNextPage}
+              className="ml-2 underline text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
+            >
+              {">>"}
+            </button>
+          )}
         </div>
       </div>
+
+      {/* ✅ Theme Toggle Button */}
+      <ThemeToggler />
     </div>
   );
-});
+};
 
 export default TaskList;

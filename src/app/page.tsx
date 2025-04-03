@@ -5,26 +5,27 @@ import AvatarDropdown from "@/components/ui/AvatarDropdown";
 import Sidebar from "@/components/ui/Sidebar";
 import useAuth from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const Home = ({}) => {
   const { user, loading } = useAuth();
   const router = useRouter();
 
-  if (loading) {
-    return (
-      <div className="border-2 size-12 absolute translate-x-1/2 translate-y-1/2 border-blue-500 border-r-slate-200 rounded-full animate-spin"></div>
-    );
-  }
+  useEffect(() => {
+    // Redirect when loading is done and user is null
+    if (!loading && !user) {
+      router.push('/login');
+    }
+  }, [user, loading, router]); // dependencies include `loading`
 
-  if (!user) {
-    router.push('/login');
+  if (loading) {
+    return <p>Loading...</p>; // You could also use a spinner here.
   }
 
   return (
     <div className="h-screen">
       {/* <Sidebar user={user} /> */}
-
-      <div className="flex justify-center">
+      <div>
         <TaskList user={user} />
       </div>
       <div className="fixed bottom-6 left-6">

@@ -50,7 +50,9 @@ export default function SignupForm() {
 
   return (
     <div className="flex border bg-white rounded p-6 w-96 flex-col justify-center">
-      {toast && <div className="p-4 bg-white rounded fixed top-4 right-4 border shadow">{toastMessage}</div>}
+      {toast && <div className="p-4 bg-white rounded fixed top-4 right-4 border shadow">
+        {toastMessage} <button onClick={() => setToast(!toast)}>x</button>
+      </div>}
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <h2 className=" text-center text-2xl/9 font-bold tracking-tight text-gray-900">
           Create your account

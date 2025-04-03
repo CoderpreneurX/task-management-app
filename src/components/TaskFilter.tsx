@@ -2,12 +2,16 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
 interface TaskFilterProps {
-  allCount: number,
-  completedCount: number,
-  pendingCount: number
+  allCount: number | undefined;
+  completedCount: number | undefined;
+  pendingCount: number | undefined;
 }
 
-const TaskFilter = ({allCount, completedCount, pendingCount}: TaskFilterProps) => {
+const TaskFilter = ({
+  allCount,
+  completedCount,
+  pendingCount,
+}: TaskFilterProps) => {
   const searchParams = useSearchParams();
   const tasksFilter = searchParams.get("tasks");
 
@@ -20,16 +24,15 @@ const TaskFilter = ({allCount, completedCount, pendingCount}: TaskFilterProps) =
             tasksFilter === null && "bg-emerald-200 text-slate-900 "
           } inline-block px-4 sm:px-14 py-2 rounded focus:outline-none`}
         >
-          All {`(${allCount})`}
+          All {allCount === undefined ? `(${0})` : `(${allCount})` }
         </Link>
-
         <Link
           href="/?tasks=pending&page=1"
           className={`${
             tasksFilter === "pending" && "bg-emerald-200 text-slate-900 "
           } inline-block px-4 sm:px-14 py-2 rounded focus:outline-none`}
         >
-          Pending {`(${pendingCount})`}
+          Pending {pendingCount === undefined ? `(${0})` : `(${pendingCount})`}
         </Link>
 
         <Link
@@ -38,7 +41,7 @@ const TaskFilter = ({allCount, completedCount, pendingCount}: TaskFilterProps) =
             tasksFilter === "completed" && "bg-emerald-200 text-slate-900 "
           } inline-block px-4 sm:px-14 py-2 rounded focus:outline-none`}
         >
-          Completed {`(${completedCount})`}
+          Completed {completedCount === undefined ? `(${0})` : `(${completedCount})`}
         </Link>
       </ul>
     </div>

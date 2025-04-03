@@ -58,7 +58,7 @@ export default function SignupForm() {
                 : "bg-white text-gray-900 border-gray-300"
             }`}
           >
-            {toastMessage}
+            {toastMessage} <button onClick={() => setToast(!toast)}>x</button>
           </div>
         )}
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">

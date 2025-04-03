@@ -8,7 +8,7 @@ import {
 } from "@radix-ui/react-icons";
 import { Badge } from "./ui/Badge";
 import { Button } from "./ui/Button";
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogDescription, DialogFooter,  } from "./ui/Dialog";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogDescription, DialogFooter } from "./ui/Dialog";
 import EditTask from "./EditTask";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -44,13 +44,13 @@ const Task = observer(
     const deleteMutation = useMutation({
       mutationFn: () => deleteTask({ id }),
       onSuccess: (message) => {
-        setToast(true)
-        setToastMessage(message.message)
+        setToast(true);
+        setToastMessage(message.message);
         queryClient.invalidateQueries({ queryKey: ["tasks"] });
       },
       onError: (error) => {
-        setToast(true)
-        setToastMessage(error.message)
+        setToast(true);
+        setToastMessage(error.message);
         console.error("Error deleting task:", error);
       },
     });
@@ -61,20 +61,24 @@ const Task = observer(
         return toggleTaskStatus({ id, status: newStatus });
       },
       onSuccess: (message) => {
-        setToast(true)
-        setToastMessage(message.message)
+        setToast(true);
+        setToastMessage(message.message);
         queryClient.invalidateQueries({ queryKey: ["tasks"] });
       },
       onError: (error) => {
-        setToast(true)
-        setToastMessage(error.message)
+        setToast(true);
+        setToastMessage(error.message);
         console.error("Error marking task status:", error);
       },
     });
 
     return (
-      <div className="relative bg-white p-4 w-full rounded shadow mt-1 border-b border-slate-300 max-w-2xl">
-        {toast && <div className="p-4 bg-white z-10 rounded fixed top-4 right-4 border shadow">{toastMessage}</div>}
+      <div className="relative bg-white dark:bg-gray-800 dark:text-white p-4 w-full rounded shadow mt-1 border border-slate-300 dark:border-gray-700 max-w-2xl">
+        {toast && (
+          <div className="p-4 bg-white dark:bg-gray-900 text-black dark:text-white z-10 rounded fixed top-4 right-4 border shadow">
+            {toastMessage} <button onClick={() => setToast(!toast)}>x</button>
+          </div>
+        )}
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-medium">{title}</h3>
 
@@ -84,61 +88,43 @@ const Task = observer(
               <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
                   <Button variant="ghost" size="icon">
-                    <Pencil2Icon className="w-5 h-5 text-blue-500" />
+                    <Pencil2Icon className="w-5 h-5 text-blue-500 dark:text-blue-400" />
                   </Button>
                 </DialogTrigger>
 
-                <EditTask
-                  id={id}
-                  title={title}
-                  description={description}
-                  status={status}
-                  open={open}
-                  setOpen={setOpen}
-                />
+                <EditTask id={id} title={title} description={description} status={status} open={open} setOpen={setOpen} />
               </Dialog>
 
               {/* ✅ Delete Button */}
               <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
                 {/* Delete Button - Opens Dialog */}
                 <DialogTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    disabled={deleteMutation.isPending}
-                  >
+                  <Button variant="ghost" size="icon" disabled={deleteMutation.isPending}>
                     {deleteMutation.isPending ? (
-                      <span className="w-5 h-5 animate-spin border-2 border-red-500 border-t-transparent rounded-full"></span>
+                      <span className="w-5 h-5 animate-spin border-2 border-red-500 dark:border-red-400 border-t-transparent rounded-full"></span>
                     ) : (
-                      <TrashIcon className="w-5 h-5 text-red-500" />
+                      <TrashIcon className="w-5 h-5 text-red-500 dark:text-red-400" />
                     )}
                   </Button>
                 </DialogTrigger>
 
                 {/* Dialog Content */}
-                <DialogContent>
+                <DialogContent className="dark:bg-gray-900 dark:text-white">
                   <DialogHeader>
                     <DialogTitle>Confirm Deletion</DialogTitle>
                     <DialogDescription>
-                      Are you sure you want to delete this task? This action
-                      cannot be undone.
+                      Are you sure you want to delete this task? This action cannot be undone.
                     </DialogDescription>
                   </DialogHeader>
 
                   <DialogFooter className="mt-4 flex justify-end gap-2">
-                    <Button
-                      variant="secondary"
-                      onClick={() => setConfirmOpen(false)}
-                    >
+                    <Button variant="secondary" onClick={() => setConfirmOpen(false)}>
                       Cancel
                     </Button>
-                    <Button
-                      variant="destructive"
-                      onClick={() => {
-                        deleteMutation.mutate();
-                        setConfirmOpen(false);
-                      }}
-                    >
+                    <Button variant="destructive" onClick={() => {
+                      deleteMutation.mutate();
+                      setConfirmOpen(false);
+                    }}>
                       Delete
                     </Button>
                   </DialogFooter>
@@ -146,18 +132,13 @@ const Task = observer(
               </Dialog>
 
               {/* ✅ Status Toggle Button */}
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => toggleTaskStatusMutation.mutate()}
-                disabled={toggleTaskStatusMutation.isPending}
-              >
+              <Button variant="ghost" size="icon" onClick={() => toggleTaskStatusMutation.mutate()} disabled={toggleTaskStatusMutation.isPending}>
                 {toggleTaskStatusMutation.isPending ? (
-                  <span className="w-5 h-5 animate-spin border-2 border-blue-500 border-t-transparent rounded-full"></span>
+                  <span className="w-5 h-5 animate-spin border-2 border-blue-500 dark:border-blue-400 border-t-transparent rounded-full"></span>
                 ) : status === "pending" ? (
-                  <CheckCircledIcon className="w-5 h-5 text-green-500" />
+                  <CheckCircledIcon className="w-5 h-5 text-green-500 dark:text-green-400" />
                 ) : (
-                  <CrossCircledIcon className="w-5 h-5 text-red-500" />
+                  <CrossCircledIcon className="w-5 h-5 text-red-500 dark:text-red-400" />
                 )}
               </Button>
             </div>
@@ -165,19 +146,14 @@ const Task = observer(
         </div>
 
         {currentUser.role === "admin" && (
-          <p className="mt-2 text-xs text-slate-600">
-            {canModify ? "You" : user.email}
-          </p>
+          <p className="mt-2 text-xs text-slate-600 dark:text-gray-400">{canModify ? "You" : user.email}</p>
         )}
 
-        <Badge
-          className="my-2"
-          variant={status === "pending" ? "error" : "success"}
-        >
+        <Badge className="my-2" variant={status === "pending" ? "error" : "success"}>
           {status === "pending" ? "Pending" : "Completed"}
         </Badge>
 
-        <p className="mt-2 text-sm text-slate-600">{description}</p>
+        <p className="mt-2 text-sm text-slate-600 dark:text-gray-300">{description}</p>
       </div>
     );
   }
